@@ -1,0 +1,93 @@
+// For full API documentation, including code examples, visit https://wix.to/94BuAAs
+import wixData from 'wix-data';
+//SUP QIE, SOME NOTES, ALL CAPS MEANS THE THING IS A VARIABLE
+var DESTINATION,PRICE,ACTIVITY;
+$w.onReady(function () {
+	//TODO: write your page related code here...
+	
+	//Initilizing variables
+	DESTINATION = ["New Zealand","Australia","Thailand","Indonesia"];
+	PRICE = "Any";
+	ACTIVITY = "Any";	
+});
+
+//---------------------------------------------------------------------------------------------------------------------------------
+//Dropdown Menu 1 Destination
+//---------------------------------------------------------------------------------------------------------------------------------
+export function dropdown1_change(event, $w) {
+	//Add your code for this event here: 
+	DESTINATION = $w("#dropdown1").value;
+	if($w("#dropdown1").value === "Any"){
+		DESTINATION = ["New Zealand","Australia"];
+		$w("#dataset1").setFilter(wixData.filter())
+	}else{
+		$w("#dataset1").setFilter(wixData.filter()
+		.contains("destination", $w("#dropdown1").value))
+		;
+	}
+}
+//--------------------------------------------------------------------------------------------------------------------------------
+//********************************************************************************************************************************
+//--------------------------------------------------------------------------------------------------------------------------------
+//Dropdown menu 2 Price
+//---------------------------------------------------------------------------------------------------------------------------------
+export function dropdown2_change(event, $w) {
+	//Add your code for this event here:
+	PRICE = $w("#dropdown2").value;
+
+	//Conditional statements
+	if($w("#dropdown2").value === "Any"){
+		$w("#dataset1").setFilter(wixData.filter()
+		.hasSome("destination", DESTINATION)
+		);
+		
+	}else if($w("#dropdown2").value.includes("Under")){
+		var value1 = parseInt($w("#dropdown2").value.replace("Under ","").replace("$",""));
+		$w("#dataset1").setFilter(wixData.filter()
+		.lt("realPrice", value1)
+		.hasSome("destination", DESTINATION)
+		);
+	}else if($w("#dropdown2").value.includes("Above")){
+		var value1 = parseInt($w("#dropdown2").value.replace(" & Above","").replace("$",""));
+		$w("#dataset1").setFilter(wixData.filter()
+		.lt("realPrice", value1)
+		.hasSome("destination", DESTINATION)
+		);
+	}else{
+		var value1 = parseInt($w("#dropdown2").value.split(" - ")[0].replace("$",""));
+		var value2 = parseInt($w("#dropdown2").value.split(" - ")[1].replace("$",""));
+		$w("#dataset1").setFilter(wixData.filter()
+		.between("realPrice", value1, value2)
+		.hasSome("destination", DESTINATION)
+		);
+	}
+}
+//--------------------------------------------------------------------------------------------------------------------------------
+//********************************************************************************************************************************
+//--------------------------------------------------------------------------------------------------------------------------------
+//Dropdown menu 3 Duration
+//---------------------------------------------------------------------------------------------------------------------------------
+
+export function dropdown3_change(event, $w) {
+	//Add your code for this event here: 
+	if($w("#dropdown3").value.includes("More than ")){
+		var value1 = parseInt($w("#dropdown3").value.replace("More than ","").replace(" Days",""));
+		$w("#dataset1").setFilter(wixData.filter().gt("realDuration", value1));
+	}else{
+		var value1 = parseInt($w("#dropdown3").value.split(" - ")[0].replace(" Days",""));
+		var value2 = parseInt($w("#dropdown3").value.split(" - ")[1].replace(" Days",""));
+		$w("#dataset1").setFilter(wixData.filter()
+			.between("realDuration", value1, value2));
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------
+//********************************************************************************************************************************
+//--------------------------------------------------------------------------------------------------------------------------------
+//Dropdown menu 3 Activity
+//---------------------------------------------------------------------------------------------------------------------------------
+export function dropdown4_change(event) {
+	//Add your code for this event here: 
+	$w("#dataset1").setFilter(wixData.filter()
+		.contains("newField", $w("#dropdown4").value));
+}
